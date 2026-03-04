@@ -1,0 +1,68 @@
+services:
+  app:
+    build:
+      context: ./app/
+      dockerfile: ../devops/docker/Dockerfile
+    image: fastapi/backend
+    container_name: backend
+    hostname: backend
+    networks:
+      - internal
+      - shared
+    ports:
+      - 127.0.0.1:8000:8000
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - DEBUG=False
+      # Avoid special characters since this value is not base64 encoded
+      - SECRET_KEY=${SECRET_KEY:-VKnroLzyyjvUk316fuyY2vO8jnrP6obbEjH75PGESQpf2Zwu2SJkGUme1cRj67Hz}
+      # Enable TLS by setting TLS_ENABLE=1
+      - TLS_ENABLE=0
+      # Avoid special characters since this value is not base64 encoded
+      - POSTGRES_DB=application
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_USER=postgres
+    volumes:
+       - ./app:/usr/src
+       - ./docs:/usr/src/docs
+
+  postgres:
+    image: postgres:17-alpine
+    container_name: postgres
+    hostname: postgres
+    networks:
+      - internal
+    ports:
+      - 127.0.0.1:5432:5432
+    environment:
+      - POSTGRES_DB=application
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  redis:
+    image: redis:8-alpine
+    container_name: redis
+    hostname: redis
+    networks:
+      - internal
+    ports:
+      - 127.0.0.1:6379:6379
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+networks:
+  internal:
+    name: internal
+  shared:
+    name: shared

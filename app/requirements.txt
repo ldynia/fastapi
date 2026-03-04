@@ -1,0 +1,5 @@
+alembic
+fastapi[standard]
+JSON-log-formatter
+pytest
+sqlmodel
