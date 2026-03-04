@@ -67,12 +67,15 @@ RUN chown -R ${USER}:${GROUP} ${APP_TLS_CERTS_DIR} ${APP_TLS_PRICATE_DIR} ${WORK
 
 USER ${USER}:${GROUP}
 ENV PATH=/home/${USER}/.local/bin:${PATH}
-RUN python -m pip install --upgrade pip -r ${WORKDIR}/requirements.txt --no-cache-dir
+
+# Install packages with uv
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN uv sync --no-cache --project ${WORKDIR}/pyproject.toml
 
 # Assert the expected python version
-RUN test $(python -c 'import sys; version=sys.version_info[:2]; print(f"{version[0]}.{version[1]}")') = ${PY_VER}
+RUN test $(uv run python -c 'import sys; version=sys.version_info[:2]; print(f"{version[0]}.{version[1]}")') = ${PY_VER}
 
-EXPOSE ${APP_PORT_HTTP} ${APP_PORT_WS}
+EXPOSE ${APP_PORT_HTTP}
 VOLUME ${WORKDIR}
 
 HEALTHCHECK CMD ${WORKDIR}/scripts/healthcheck.sh || exit 1

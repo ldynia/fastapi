@@ -6,14 +6,22 @@ set -Eeuo pipefail
 # This project is never meant to be used in production.
 # It serves demonstration purposes only, and is designed for testing purposes only.
 
+run_migrations() {
+  echo "Running migrations with Alembic"
+  echo "------------------------------------------"
+  uv run alembic upgrade head
+  echo "------------------------------------------"
+}
+
 print_ips() {
   APP_CONTAINER_IP=$(ip addr | grep inet | tail -n1 | awk '{print $2}' |  cut -d'/' -f1)
   PORSTGRES_CONTAINER_IP=$(ping  postgres -c 1 | grep -E -o '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -1)
   REDIS_CONTAINER_IP=$(ping  redis -c 1 | grep -E -o '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -1)
   echo "------------------------------------------"
-  echo "App: $APP_CONTAINER_IP"
-  echo "Postgress: $PORSTGRES_CONTAINER_IP"
-  echo "Redis: $REDIS_CONTAINER_IP"
+  echo "Container IPs:"
+  echo "- App: $APP_CONTAINER_IP"
+  echo "- Postgress: $PORSTGRES_CONTAINER_IP"
+  echo "- Redis: $REDIS_CONTAINER_IP"
   echo "------------------------------------------"
 }
 
@@ -65,6 +73,7 @@ create_self_signed_ssl_cert_without_root_ca() {
 
 # Execute functions
 print_ips
+run_migrations
 
 # if args empty
 if [ -z "$@" ]; then
@@ -88,17 +97,16 @@ if [ -z "$@" ]; then
     # create_self_signed_ssl_cert_with_root_ca
     create_self_signed_ssl_cert_without_root_ca
 
-    echo "Visit Django and Starlette application on:"
+    echo "Visit application on:"
     echo "- https://localhost:${APP_PORT_HTTP}"
     echo "------------------------------------------"
 
-    uvicorn main:app --port $APP_PORT_HTTP $UVICORN_OPTIONS_COMMON $UVICORN_OPTIONS_TLS
+    uv run uvicorn main:app --port $APP_PORT_HTTP $UVICORN_OPTIONS_COMMON $UVICORN_OPTIONS_TLS
   else
-    echo "Visit Django and Starlette application on:"
-    echo "- http://localhost:${APP_PORT_HTTP}"
+    echo "Visit application on: http://localhost:${APP_PORT_HTTP}"
     echo "------------------------------------------"
-
-    uvicorn main:app --port $APP_PORT_HTTP $UVICORN_OPTIONS_COMMON
+    
+    uv run uvicorn main:app --port $APP_PORT_HTTP $UVICORN_OPTIONS_COMMON
   fi
 else
   exec "$@"

@@ -15,7 +15,7 @@ services:
       - postgres
       - redis
     environment:
-      - DEBUG=False
+      - DEBUG=True
       # Avoid special characters since this value is not base64 encoded
       - SECRET_KEY=${SECRET_KEY:-VKnroLzyyjvUk316fuyY2vO8jnrP6obbEjH75PGESQpf2Zwu2SJkGUme1cRj67Hz}
       # Enable TLS by setting TLS_ENABLE=1
