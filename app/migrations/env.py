@@ -4,8 +4,8 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from sqlmodel import SQLModel
 
-from config.config import POSTGRES_SYNC_URL
-from models import User
+from config.service import POSTGRES_SYNC_URL
+from domain.models import User
 
 
 # this is the Alembic Config object, which provides

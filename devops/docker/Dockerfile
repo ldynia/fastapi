@@ -5,7 +5,7 @@ ARG PY_VER
 
 ARG APP_TLS_CERTS_DIR=/etc/wfs/ssl/certs \
     APP_TLS_PRICATE_DIR=/etc/wfs/ssl/private \
-    APP_PORT_HTTP=8000 \
+    APP_PORT=8000 \
     ENVIRONMENT=development \
     GID=1000 \
     GROUP=nonroot \
@@ -16,7 +16,7 @@ ARG APP_TLS_CERTS_DIR=/etc/wfs/ssl/certs \
 
 ENV APP_TLS_CERTS_DIR=$APP_TLS_CERTS_DIR \
     APP_TLS_PRICATE_DIR=$APP_TLS_PRICATE_DIR \
-    APP_PORT_HTTP=$APP_PORT_HTTP \
+    APP_PORT=$APP_PORT \
     ENVIRONMENT=$ENVIRONMENT \
     PYTHONIOENCODING=UTF-8 \
     PYTHONUNBUFFERED=True \
@@ -75,7 +75,7 @@ RUN uv sync --no-cache --project ${WORKDIR}/pyproject.toml
 # Assert the expected python version
 RUN test $(uv run python -c 'import sys; version=sys.version_info[:2]; print(f"{version[0]}.{version[1]}")') = ${PY_VER}
 
-EXPOSE ${APP_PORT_HTTP}
+EXPOSE ${APP_PORT}
 VOLUME ${WORKDIR}
 
 HEALTHCHECK CMD ${WORKDIR}/scripts/healthcheck.sh || exit 1

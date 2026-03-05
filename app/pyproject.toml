@@ -3,7 +3,7 @@ name = "Boilerplate"
 version = "0.1.0"
 description = "FastAPI project with SQLModel, Alembic, and Async Postgres"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.14"
 dependencies = [
     "alembic>=1.18.4",
     "asyncpg>=0.31.0",
@@ -16,6 +16,7 @@ dependencies = [
     "redis>=7.2.1",
     "sqlalchemy[asyncio]>=2.0.48",
     "sqlmodel>=0.0.37",
+    "typer>=0.24.1",
 ]
 
 [dependency-groups]

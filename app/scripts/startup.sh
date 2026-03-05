@@ -98,15 +98,17 @@ if [ -z "$@" ]; then
     create_self_signed_ssl_cert_without_root_ca
 
     echo "Visit application on:"
-    echo "- https://localhost:${APP_PORT_HTTP}"
+    echo "- https://localhost:${APP_PORT}"
     echo "------------------------------------------"
 
-    uv run uvicorn main:app --port $APP_PORT_HTTP $UVICORN_OPTIONS_COMMON $UVICORN_OPTIONS_TLS
+    # uv run main.py --port $APP_PORT UVICORN_OPTIONS_COMMON $UVICORN_OPTIONS_TLS
+    uv run uvicorn main:app --port $APP_PORT $UVICORN_OPTIONS_COMMON $UVICORN_OPTIONS_TLS
   else
-    echo "Visit application on: http://localhost:${APP_PORT_HTTP}"
+    echo "Visit application on: http://localhost:${APP_PORT}"
     echo "------------------------------------------"
     
-    uv run uvicorn main:app --port $APP_PORT_HTTP $UVICORN_OPTIONS_COMMON
+    # uv run main.py --port $APP_PORT $UVICORN_OPTIONS_COMMON
+    uv run uvicorn main:app --port $APP_PORT $UVICORN_OPTIONS_COMMON
   fi
 else
   exec "$@"
